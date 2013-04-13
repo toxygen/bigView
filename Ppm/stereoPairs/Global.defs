@@ -1,0 +1,217 @@
+#############################################################
+# Global.defs - Global defines for making
+#
+# Note: This is where user's should set the compiler options
+#       in order to target a specific arcitecture [e.g. 64 bit]
+#       or to customize the make [e.g. -g or -D[user definition]
+#       This file should be included by all Makefiles in the tree.
+#
+# 1) Specify threading type sproc -vs- pthread
+# 2) specify global compile flags
+# 3) specify linking: static or dynamic and set LIBDIR
+# 4) specify global link flags
+# 5) specify the compiler to use
+#
+#############################################################
+
+MAKE = gmake
+MAKEARGS = -j
+SHELL = /bin/sh
+
+#############################################################
+# 1) Specify threading type sproc -vs- pthread
+#    SGI: either, linux must use pthreads
+#############################################################
+
+# Sproc: SGI only:
+#THREADLIB = -DSPROC -DTEL_SPROC
+#THREAD_LINK =
+
+# pthreads: SGI, linux:
+THREADLIB = -DPTHREAD -DTEL_PTHREAD 
+THREAD_LINK = -lpthread
+
+#############################################################
+# 2) Specify other options: OpenGl, performance stats, FEL
+#    paging server usage
+#############################################################
+
+# Gel requires OPEN_GL, batchvis requires NOT having this defined
+#GL_FLAGS =
+GL_FLAGS = -DOPEN_GL
+
+# should performance stuff be compiled into libTask, FEL, etc?
+PERF_FLAGS =
+#PERF_FLAGS = -DTEL_PERF
+# the line below also instruments mutexes
+#PERF_FLAGS = -DTEL_PERF -DTEL_PERF_MUTEX
+
+# should FEL use a server for reading paged files?
+#FEL_SERV_FLAGS =
+FEL_SERV_FLAGS = -DFEL_PFSERVER
+
+# need a path to GECS config directory?
+#GECS_PATH = /home/sandstro/gecs/config
+#GECS_LINK = -L$(GECS_PATH)/lib -lecs
+#GECS = -I$(GECS_PATH)/include
+GECS_PATH =
+GECS_LINK = 
+GECS =
+
+FTI = -DUSEFREETYPE -I/usr/include/freetype2
+FTL = -lXft
+# FTI=
+# FTL=
+XFLAGS = -I/usr/X11R6/include $(FTI)
+
+#############################################################
+# 3) specify global compile flags
+#############################################################
+
+BASE_FLAGS = $(THREADLIB) $(GL_FLAGS) $(PERF_FLAGS) $(FEL_SERV_FLAGS) $(GECS) $(XFLAGS)
+
+# SGI Irix 5.3
+#GLBL_FLAGS      = -I. -g -mips2 -DOPEN_GL -DNO_BOOL_BUILTIN -DPRERELEASE -DNO_EXPLICIT_SPECIALIZATION_SYNTAX -DNO_EXPLICIT_INSTANTIATION_SYNTAX $(BASE_FLAGS)
+
+# SGI Irix (Mongoose Compilers: Version 7.10)
+#GLBL_FLAGS      = -I. -g -mips2 -DOPEN_GL -DNO_BOOL_BUILTIN -DPRERELEASE -DNO_EXPLICIT_SPECIALIZATION_SYNTAX -DNO_EXPLICIT_INSTANTIATION_SYNTAX  $(BASE_FLAGS)
+
+# SGI Irix (Mongoose Compilers: Version 7.20) R10000
+#GLBL_FLAGS    = -I. -g -n32 -mips4 -r10000 -DPRERELEASE -woff 3322  $(BASE_FLAGS) -LANG:std -woff 15 -woff 5
+
+# SGI Irix for r10000, debugging, optimized
+#GLBL_FLAGS      = -I. -g3 -O2 -LANG:std -OPT:Olimit=0 -n32 -mips4 -r10000 -woff 3322  $(BASE_FLAGS) 
+
+# SGI Irix for r10000, debugging, not optimized
+#GLBL_FLAGS      = -I. -g -n32 -mips4 -r10000 -DPRERELEASE  $(BASE_FLAGS) -LANG:std
+
+# SGI Irix, -64, debugging, optimized
+#GLBL_FLAGS      = -I. -O2 -g3 -64 -OPT:Olimit=0 -r10000 -DPRERELEASE -woff 3322  $(BASE_FLAGS) -LANG:std -woff 15 -woff 5
+
+# for g++ on IRIX [pre g++3.0]
+#GLBL_FORTRAN_FLAGS = -n32
+#GLBL_CPLUSPLUS_FLAGS = -Wno-non-template-friend
+#GLBL_FLAGS = -I. -g -DPRERELEASE  $(BASE_FLAGS)
+
+# for g++ on IRIX [post g++3.0]
+#GLBL_FORTRAN_FLAGS = -n32
+#GLBL_CPLUSPLUS_FLAGS = -Wno-non-template-friend -mabi=n32
+#GLBL_FLAGS = -mips4 -I. -g -DPRERELEASE  $(BASE_FLAGS)
+
+# for g++ on linux (with nonmotif version of GLw) [note: for profiling add -pg]
+#GLBL_FLAGS = -I. -O3 -g -DPRERELEASE $(BASE_FLAGS) -Wno-non-template-friend -D_DONT_USE_MOTIF_GLW_ -DLINUX -D_XOPEN_SOURCE=500 -D_GNU_SOURCE -D_THREAD_SAFE -DFEL_TEMPLATE_DEFS_IN_H -DGL_GLEXT_PROTOTYPES
+
+# for g++ on linux for profiling
+#GLBL_FLAGS = -I. -O3 -pg -g -DPRERELEASE $(BASE_FLAGS) -Wno-non-template-friend -D_DONT_USE_MOTIF_GLW_ -DLINUX -D_XOPEN_SOURCE=500 -D_GNU_SOURCE -D_THREAD_SAFE -DFEL_TEMPLATE_DEFS_IN_H -DGL_GLEXT_PROTOTYPES
+
+# for g++ on linux, debugging
+#GLBL_FLAGS = -I. -g -DPRERELEASE $(BASE_FLAGS) -Wno-non-template-friend -DLINUX -D_XOPEN_SOURCE=500 -D_GNU_SOURCE -D_THREAD_SAFE -DFEL_TEMPLATE_DEFS_IN_H -DGL_GLEXT_PROTOTYPES
+
+# for g++ on linux, optimized
+GLBL_FLAGS = -I. -g -O3 -DPRERELEASE $(BASE_FLAGS) -Wno-non-template-friend -DLINUX -D_XOPEN_SOURCE=500 -D_GNU_SOURCE -D_THREAD_SAFE -DFEL_TEMPLATE_DEFS_IN_H -DGL_GLEXT_PROTOTYPES
+
+#############################################################
+# 4) specify linking: static or dynamic and set LIBDIR
+#############################################################
+
+TOPDIR = /home/sandstro/visTools
+LIBDIR = $(TOPDIR)/lib
+INCDIR = $(TOPDIR)/include
+
+########################
+# STATIC - i.e. libFoo.a
+########################
+EXT     = a
+AR      = ar
+ARFLAGS = rsvcl
+RANLIB  = ar tsl
+
+# vanilla IRIX
+#LINKFLAGS = -L$(LIBDIR)
+
+# vanilla IRIX, g++
+#LINKFLAGS = -L$(LIBDIR) -mabi=n32
+
+# IRIX with g++ in /usr/local/gcc
+# Note the rpath arg which tells the compiler where to look for libs
+# set this if your installation of g++ is in a different place
+#LINKFLAGS = -L$(LIBDIR) -mabi=n32 -Wl,-rpath,/usr/local/lib 
+
+# for linux, gcc in /usr/local/gcc/
+#LINKFLAGS = -L/usr/X11R6/lib -L$(LIBDIR) -Wl,-rpath,/usr/local/gcc/lib 
+
+# for linux
+#LINKFLAGS = -Wl,-non_shared -L/usr/X11R6/lib -L$(LIBDIR)
+LINKFLAGS = -L/usr/X11R6/lib64 -L$(LIBDIR)
+
+# vanilla w/gecs
+#LINKFLAGS = -L$(LIBDIR) $(GECS_LINK)
+
+##########################
+# DYNAMIC - i.e. libFoo.so
+##########################
+#EXT     = so
+#AR      = $(CC)
+#ARFLAGS = -shared -L. -o 
+#RANLIB  = ls
+# vanilla
+#LINKFLAGS = -L$(LIBDIR) -Wl,-rpath,/usr/local/lib 
+# for linux
+#LINKFLAGS = -L/usr/X11R6/lib -L$(LIBDIR)
+# for gecs
+#LINKFLAGS = -L$(LIBDIR) $(GECS_LINK)
+
+#############################################################
+# 5) specify global link flags
+#############################################################
+
+XLINK = -Wl,-rpath,/usr/X11R6/lib $(FTL)
+
+# SGI
+#GLBL_LINK = $(XLINK) $(THREAD_LINK) $(LINKFLAGS) -lm 
+
+# linux
+#for GNU linker (-noinhibit-exec = ignore multiply defined symbols):
+GLBL_LINK = $(XLINK) $(THREAD_LINK) $(LINKFLAGS) -lm 
+
+#############################################################
+# 6) specify the compiler to use
+#############################################################
+
+# SGI only:
+#CC		= CC
+#CPLUSPLUS       = CC
+
+# for linux, gcc in /usr/local/gcc/
+#CC=/usr/local/gcc/bin/gcc
+#CPLUSPLUS = /usr/local/gcc/bin/g++
+
+# SGI, linux: g++
+CC = g++
+CPLUSPLUS = g++
+
+#FORTRAN         = g77
+FORTRAN         = gfortran
+SHELL           = /bin/sh
+
+#############################################################
+.SUFFIXES: .c .cc .C .f .cxx .cpp
+
+.c.o:
+	$(CC) -I$(INCDIR) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.C.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_CPLUSPLUS_FLAGS) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.cxx.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_CPLUSPLUS_FLAGS) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.cc.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.cpp.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.f.o:
+	$(FORTRAN) -I$(INCDIR)  $(GLBL_FORTRAN_FLAGS) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+

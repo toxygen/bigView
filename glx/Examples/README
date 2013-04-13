@@ -1,0 +1,13 @@
+
+example of image compositing with z-buffering:
+dump.000.z: cube depth image
+dump.000.rgba: cube rgba image
+dump.000.z: sphere depth image
+dump.000.rgba: sphere rgba image
+
+ ./load dump.001 dump.000
+
+// Volume rendering
+
+./vol ~/tao/shop/alpha/data/MRbrain3D.dat
+./vol /scratch/zingale/sampled/bubble_1.5e7_3d_4_0750f.bin

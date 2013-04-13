@@ -1,0 +1,72 @@
+=== BigView ===
+
+This is source for a suite of programs to view very large images.
+
+1) Images must first be in PPM format
+2) generate a .PAGED format image running genPaged on a .PPM
+3) view a .PAGED file with showPaged
+
+---------
+Building
+---------
+$> perl ./makeLinks.pl
+$> make -j
+
+makeLinks.pl ensures all libs/apps are built with the same flags.
+Put locally-required build changes in the top-level Global.defs.
+
+---------
+Examples
+---------
+
+$> djpeg -grayscale 05-ra-03-humphrey-A061R1.jpg > 05-ra-03-humphrey-A061R1.ppm
+i---or---
+$> jpegtopnm 05-ra-03-humphrey-A061R1.jpg > 05-ra-03-humphrey-A061R1.pp
+
+$> genPaged 05-ra-03-humphrey-A061R1.ppm
+==== 05-ra-03-humphrey-A061R1.ppm =====
+Format: Binary PGM
+Max Pixel Value = 255
+          Width = 956
+         Height = 962
+     Components = 1[1=grey,3=rgb]
+      Bit Depth = 8 bits
+     Pixel Size = 1 bytes
+         Offset = 15 bytes
+P5
+# Paged format with mipmaps: 256x256x1 = 65536 bytes per page
+# Level 0 : [956,962] => [4,4] = 16 pages starting at page  0 @     444 bytes
+# Level 1 : [478,481] => [2,2] =  4 pages starting at page 16 @ 1049020 bytes
+# Level 2 : [239,240] => [1,1] =  1 pages starting at page 20 @ 1311164 bytes
+# ========================================
+# Total pages = 21
+# Total bytes = header + pages
+#             = 444 + 1376256 = 1376700
+956 962 255
+
+Levels = 3
+
+$> showPaged 05-ra-03-humphrey-A061R1.ppm.paged
+===== 05-ra-03-humphrey-A061R1.ppm.paged =====
+Format: Binary PGM
+Comment: Paged format with mipmaps: 256x256x1 = 65536 bytes per page:
+Comment: Level 0 : [956,962] => [4,4] = 16 pages starting at page  0 @     444 bytes:
+Comment: Level 1 : [478,481] => [2,2] =  4 pages starting at page 16 @ 1049020 bytes:
+Comment: Level 2 : [239,240] => [1,1] =  1 pages starting at page 20 @ 1311164 bytes:
+Comment: ========================================:
+Comment: Total pages = 21:
+Comment: Total bytes = header + pages:
+Comment:             = 444 + 1376256 = 1376700:
+Max Pixel Value = 255
+          Width = 956
+         Height = 962
+     Components = 1[1=grey,3=rgb]
+      Bit Depth = 8 bits
+     Pixel Size = 1 bytes
+         Offset = 444 bytes
+# Level 0 : [956,962] => [4,4] = 16 pages
+# Level 1 : [478,481] => [2,2] = 4 pages
+# Level 2 : [239,240] => [1,1] = 1 pages
+maxTexPages = 86
+Max LOD = 0
+

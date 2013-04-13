@@ -1,0 +1,38 @@
+CPLUSPLUS = g++
+CC        = gcc
+FORTRAN   = g77
+EXT       = a
+AR        = ar
+ARFLAGS   = rsvcl
+RANLIB    = ar tsl
+OPT	  = -g -O2
+#OPT	  = -g
+
+# NOTE: Freetype and -O3 do not seem to be compatible
+FTI    = -DUSEFREETYPE -I/usr/include/freetype2
+FTL    = -lXft
+#FTI    =
+#FTL    =
+
+XINC = -I/usr/X11R6/include $(FTI)
+XLINK  = -L/usr/X11R6/lib64 -Wl,-rpath,/usr/X11R6/lib64 $(FTL)
+
+GLBL_FLAGS = -I. $(OPT) $(XINC) $(LOCAL_FLAGS)
+
+GLBL_LINK = $(XLINK) -lm -lpthread
+
+#############################################################
+
+.SUFFIXES: .c .C .f .cxx 
+
+.c.o:
+	$(CC) -c $(GLBL_FLAGS) $<
+
+.C.o:
+	$(CPLUSPLUS) -c $(GLBL_FLAGS) $<
+
+.cxx.o:
+	$(CPLUSPLUS) -c $(GLBL_FLAGS) $<
+
+.f.o:
+	$(FORTRAN) -c $(GLBL_FLAGS) $<

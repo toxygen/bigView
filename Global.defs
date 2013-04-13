@@ -1,0 +1,46 @@
+
+EXT       = a
+AR        = ar
+ARFLAGS   = rsvcl
+RANLIB    = ar tsl
+CC        = g++
+CPLUSPLUS = g++
+FORTRAN   = g77
+INCDIR    = .
+
+# freetype enabled by default:
+FTI    = -DUSEFREETYPE -I/usr/include/freetype2
+FTL    = -lXft
+# to disable Freetype:
+#FTI=
+#FTL=
+
+GLBL_CPLUSPLUS_FLAGS = 
+GLBL_FORTRAN_FLAGS =
+
+XINC  = -I/usr/X11R6/include $(FTI)
+XLINK = -L/usr/X11R6/lib64 -Wl,-rpath,/usr/X11R6/lib64 $(FTL)
+
+GLBL_FLAGS = -I. $(OPT) $(XINC) $(LOCAL_FLAGS)
+GLBL_LINK  = $(XLINK) -lm -lpthread
+
+#############################################################
+.SUFFIXES: .c .cc .C .f .cxx
+
+.c.o:
+	$(CC) -I$(INCDIR) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.C.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_CPLUSPLUS_FLAGS) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.cxx.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_CPLUSPLUS_FLAGS) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.cc.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.cpp.o:
+	$(CPLUSPLUS) -I$(INCDIR) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
+
+.f.o:
+	$(FORTRAN) -I$(INCDIR)  $(GLBL_FORTRAN_FLAGS) $(GLBL_FLAGS) -c $(LOCAL_FLAGS) $<
